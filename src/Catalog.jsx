@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ShopContext } from './Context';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const products = [
   { id: 1, name: 'Телефон', price: 15000 },
@@ -12,9 +12,20 @@ const products = [
 
 function Catalog() {
   const { cart, setCart } = useContext(ShopContext);
+  const navigate = useNavigate();
 
   function addToCart(product) {
-    setCart([...cart, product]);
+    const existingItem = cart.find((item) => item.id === product.id);
+
+    if (existingItem) {
+      setCart(cart.map((item) => 
+        item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+      ));
+    } else {
+      setCart([...cart, { ...product, qty: 1 }]);
+    }
+    
+    navigate('/cart');
   }
 
   return (
